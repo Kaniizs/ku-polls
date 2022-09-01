@@ -15,7 +15,7 @@ to be added.
 
 ## Project Documents
 
-All project documents are in the [Project Wiki](https://github.com/oMojiko/ku-polls/wiki).
+All project documents are in the [Project Wiki](../../ku-polls/wiki).
 
 - [Vision Statement](https://github.com/oMojiko/ku-polls/wiki/Vision-Statement)
 
