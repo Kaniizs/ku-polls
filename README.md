@@ -21,8 +21,8 @@ All project documents are in the [Project Wiki](https://github.com/oMojiko/ku-po
 
 - [Requirements](https://github.com/oMojiko/ku-polls/wiki/Requirements)
   
-- [Development Plan](https://github.com/oMojiko/ku-polls/wiki/Development-plan)
+- [Project Plan](https://github.com/oMojiko/ku-polls/wiki/Development-plan)
 
-- [Iteration 1 Plan](https://github.com/oMojiko/ku-polls/wiki/iteration-1-Plan) and [Task Board]
+- [Iteration 1 Plan](https://github.com/oMojiko/ku-polls/wiki/iteration-1-Plan) and [Task Board](https://github.com/users/oMojiko/projects/3/views/1)
 
 [django-tutorial]: https://docs.djangoproject.com/en/4.1/intro/tutorial01/
