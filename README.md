@@ -20,5 +20,9 @@ All project documents are in the [Project Wiki](https://github.com/oMojiko/ku-po
 - [Vision Statement](https://github.com/oMojiko/ku-polls/wiki/Vision-Statement)
 
 - [Requirements](https://github.com/oMojiko/ku-polls/wiki/Requirements)
+  
+- [Development Plan](https://github.com/oMojiko/ku-polls/wiki/Development-plan)
 
-[django-tutorial]: TODO-write-the-tutorial-URL-here
+- [Iteration 1 Plan](https://github.com/oMojiko/ku-polls/wiki/iteration-1-Plan) and [Task Board]
+
+[django-tutorial]: https://docs.djangoproject.com/en/4.1/intro/tutorial01/
