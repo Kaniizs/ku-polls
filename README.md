@@ -9,9 +9,9 @@ additional features.
 App created as part of the [Individual Software Process](
 https://cpske.github.io/ISP) course at Kasetsart University.
 
-## Install and Run
+## How to Install and Run
 
-to be added.
+to be added in the future.
 
 ## Project Documents
 
