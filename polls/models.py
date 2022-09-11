@@ -6,9 +6,10 @@ from django.utils import timezone
 
 
 class Question(models.Model):
+    """A model class for Question"""
     question_text = models.CharField(max_length=200)
     pub_date = models.DateTimeField('date published')
-    end_date = models.DateTimeField('date ended', null=True, default=None)
+    end_date = models.DateTimeField('date ended', null=True, blank=True)
 
     @admin.display(
         boolean=True,
@@ -16,15 +17,15 @@ class Question(models.Model):
         description='Published recently?',
     )
     def was_published_recently(self):
-        """Return a boolean whenever the question was published recently"""
+        """Return a boolean whether the question was published recently less than 1 day or not."""
         return timezone.localtime() - datetime.timedelta(days=1) <= self.pub_date <= timezone.localtime()
 
     def is_published(self):
-        """Return a boolean whenever the question was published"""
+        """Return a boolean whether the question was published"""
         return self.pub_date <= timezone.localtime()
 
     def can_vote(self):
-        """Return a boolean whenever the question is allowed to vote"""
+        """Return a boolean whether the question is not exceed the ending date"""
         if self.end_date is None:
             return timezone.localtime() >= self.pub_date
         return self.end_date >= timezone.localtime() >= self.pub_date
@@ -35,6 +36,7 @@ class Question(models.Model):
 
 
 class Choice(models.Model):
+    """A model class for Choice"""
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     choice_text = models.CharField(max_length=200)
     votes = models.IntegerField(default=0)
