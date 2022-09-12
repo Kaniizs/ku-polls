@@ -1,6 +1,7 @@
+from django.contrib import messages
 from django.utils import timezone
-from django.http import HttpResponseRedirect,HttpResponse
-from django.shortcuts import get_object_or_404, render
+from django.http import HttpResponseRedirect,HttpResponse,Http404
+from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
 from django.views import generic
 
@@ -17,8 +18,10 @@ class IndexView(generic.ListView):
         published in the future).
         """
         return Question.objects.filter(
-            pub_date__lte=timezone.now()
+            pub_date__lte=timezone.localtime()
         ).order_by('-pub_date')[:5] 
+    
+
 
 
 class DetailView(generic.DetailView):
@@ -28,14 +31,36 @@ class DetailView(generic.DetailView):
         """
         Excludes any questions that aren't published yet.
         """
-        return Question.objects.filter(pub_date__lte=timezone.now())
+        return Question.objects.filter(pub_date__lte=timezone.localtime())
+    
+    def get(self, request, pk):
+        """
+        Show the detail of the polls page if can_vote method is True,if not redirect to the results pages.
+        """
+        question = get_object_or_404(Question, pk=pk)
 
+        # if a question is available to vote then redirect into details page.
+        if question.can_vote() and question.is_published():
+             return render(request, 'polls/detail.html', {'question': question,})
+        # if a question is not published return an error messages and return them to index page.
+        elif not question.is_published():
+            messages.error(request, 'This question is not available for voting right now.')
+            return redirect('polls:index')
+        # if a question is cannot vote return an error messages and redirect to results page.
+        elif not question.can_vote():
+            messages.error(request, 'This question is already ended.')
+            return redirect('polls:results')
 
+        
+        
+        
+        
 class ResultsView(generic.DetailView):
     model = Question
     template_name = 'polls/results.html'
 
 def vote(request, question_id):
+    """Return a response after a user has voted a choices"""
     question = get_object_or_404(Question, pk=question_id)
     try:
         selected_choice = question.choice_set.get(pk=request.POST['choice'])
@@ -59,3 +84,4 @@ def showtime(request) -> HttpResponse:
     msg = f"<p>The time is {thaitime}.</p>"
     # return the msg in an HTTP response
     return HttpResponse(msg)
+
