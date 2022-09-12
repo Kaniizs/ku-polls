@@ -40,13 +40,13 @@ class DetailView(generic.DetailView):
         question = get_object_or_404(Question, pk=pk)
 
         # if a question is available to vote then redirect into details page.
-        
         if question.can_vote() and question.is_published():
              return render(request, 'polls/detail.html', {'question': question,})
-        # Else show an error message and redirect to index pages
+        # if a question is not published return an error messages and return them to index page.
         elif not question.is_published():
             messages.error(request, 'This question is not available for voting right now.')
             return redirect('polls:index')
+        # if a question is cannot vote return an error messages and redirect to results page.
         elif not question.can_vote():
             messages.error(request, 'This question is already ended.')
             return redirect('polls:results')
@@ -55,9 +55,6 @@ class DetailView(generic.DetailView):
         
         
         
-        
-
-
 class ResultsView(generic.DetailView):
     model = Question
     template_name = 'polls/results.html'
