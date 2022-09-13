@@ -44,7 +44,7 @@ class DetailView(generic.DetailView):
             messages.error(request, 'This question is not available for voting right now.')
             return HttpResponseRedirect(reverse('polls:index'))
         # if a question is cannot vote return an error messages and redirect to index page.
-        elif not question.can_vote():
+        if not question.can_vote():
             messages.error(request, 'This question is already exceeded the end date.')
             return HttpResponseRedirect(reverse('polls:index'))
         return render(request, 'polls/detail.html', {'question': question,})
