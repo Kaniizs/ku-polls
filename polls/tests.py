@@ -170,7 +170,7 @@ class QuestionIndexViewTests(TestCase):
         )
 
 class QuestionDetailViewTests(TestCase):
-
+    
     def test_future_question(self):
         """
         The detail view of a question with a pub_date in the future
@@ -179,7 +179,7 @@ class QuestionDetailViewTests(TestCase):
         future_question = create_question(question_text='Future question.', days=5)
         url = reverse('polls:detail', args=(future_question.id,))
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 404)
 
     def test_past_question(self):
         """

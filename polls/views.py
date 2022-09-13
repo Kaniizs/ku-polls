@@ -33,23 +33,21 @@ class DetailView(generic.DetailView):
         """
         return Question.objects.filter(pub_date__lte=timezone.localtime())
     
-    def get(self, request, pk):
+    def dispatch(self, request, pk):
         """
-        Show the detail of the polls page if can_vote method is True,if not redirect to the results pages.
+        Show the detail of the polls page if can_vote method is True,if not redirect to the index pages.
         """
         question = get_object_or_404(Question, pk=pk)
 
-        # if a question is available to vote then redirect into details page.
-        if question.can_vote() and question.is_published():
-             return render(request, 'polls/detail.html', {'question': question,})
         # if a question is not published return an error messages and return them to index page.
-        elif not question.is_published():
+        if not question.is_published():
             messages.error(request, 'This question is not available for voting right now.')
-            return redirect('polls:index')
-        # if a question is cannot vote return an error messages and redirect to results page.
+            return HttpResponseRedirect(reverse('polls:index'))
+        # if a question is cannot vote return an error messages and redirect to index page.
         elif not question.can_vote():
-            messages.error(request, 'This question is already ended.')
-            return redirect('polls:results')
+            messages.error(request, 'This question is already exceeded the end date.')
+            return HttpResponseRedirect(reverse('polls:index'))
+        return render(request, 'polls/detail.html', {'question': question,})
 
         
         
@@ -58,6 +56,18 @@ class DetailView(generic.DetailView):
 class ResultsView(generic.DetailView):
     model = Question
     template_name = 'polls/results.html'
+
+    def get(self, request, pk):
+        """
+        Show the results of the polls page if can_vote method is True,if not redirect to the results pages.
+        """
+        question = get_object_or_404(Question, pk=pk)
+
+        # if a question is not published return an error messages and return them to index page.
+        if not question.is_published():
+            messages.error(request, 'This question is not available for voting right now.')
+            return HttpResponseRedirect(reverse('polls:index'))
+        return render(request, 'polls/results.html', {'question': question,})
 
 def vote(request, question_id):
     """Return a response after a user has voted a choices"""
