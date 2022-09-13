@@ -4,11 +4,15 @@
 
 {% if latest_question_list %}
 <table>
-    <caption style="font-size: 55;">KU-Polls</caption>
+    <caption style="font-size: 55;font-style: italic;">KU-Polls</caption>
+    {% if messages %}
+    {% for message in messages %}
+        <p style="text-align: center;color: red;">{% if message.tags %} {% endif %} {{ message }}</p>
+    {% endfor %}
+    {% endif %}
         <tr>
             <th>Question</th>
             <th>Results</th>
-            <th>Vote</th>
         </tr>
     </thead>
     <tbody>
@@ -17,13 +21,11 @@
                 <tr>
                     <td><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a></td>
                     <td><a href="{% url 'polls:results' question.id %}"><button type="button">{{"Result"}}</button></a></td>
-                    <td><a href="{% url 'polls:detail' question.id %}"><button type="button">{{"Vote"}}</button></a></td>
                 </tr>
             {% else %}
                 <tr>
-                    <td><a>{{ question.question_text }}</a></td>
+                    <td><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a></td>
                     <td><a href="{% url 'polls:results' question.id %}"><button type="button">{{"Result"}}</button></a></td>
-                    <td><a>{{ message }}</a></td>
                 </tr>
             {% endif %}
        
@@ -35,8 +37,3 @@
 {% endif %}
 
 
-{% if messages %}
-    {% for message in messages %}
-        <p>{% if message.tags %} {% endif %} {{ message }}</p>
-    {% endfor %}
-{% endif %}
