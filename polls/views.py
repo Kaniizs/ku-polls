@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
 from django.views import generic
 
+
 from .models import Choice, Question
 
 
@@ -69,8 +70,11 @@ class ResultsView(generic.DetailView):
             return HttpResponseRedirect(reverse('polls:index'))
         return render(request, 'polls/results.html', {'question': question,})
 
+
 def vote(request, question_id):
-    """Return a response after a user has voted a choices"""
+    """
+    Return a response after a user has voted a choices
+    """
     question = get_object_or_404(Question, pk=question_id)
     try:
         selected_choice = question.choice_set.get(pk=request.POST['choice'])
@@ -89,7 +93,9 @@ def vote(request, question_id):
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
 
 def showtime(request) -> HttpResponse:
-    """Return the local time and date."""
+    """
+    Return the local time and dateใ
+    """
     thaitime = timezone.localtime()
     msg = f"<p>The time is {thaitime}.</p>"
     # return the msg in an HTTP response
