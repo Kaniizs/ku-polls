@@ -117,8 +117,8 @@ USE_I18N = True
 
 USE_TZ = True
 
-LOGIN_REDIRECT_URL = '/polls/'    # show list of polls
-LOGOUT_REDIRECT_URL =  '/accounts/login/'
+LOGIN_REDIRECT_URL = 'polls'    # show list of polls
+LOGOUT_REDIRECT_URL =  'login'
 
 
 # Static files (CSS, JavaScript, Images)

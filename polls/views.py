@@ -4,6 +4,8 @@ from django.http import HttpResponseRedirect,HttpResponse,Http404
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
 from django.views import generic
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 from .models import Choice, Question
@@ -25,7 +27,7 @@ class IndexView(generic.ListView):
 
 
 
-class DetailView(generic.DetailView):
+class DetailView(LoginRequiredMixin, generic.DetailView):
     model = Question
     template_name = 'polls/detail.html'
     def get_queryset(self):
@@ -70,11 +72,14 @@ class ResultsView(generic.DetailView):
             return HttpResponseRedirect(reverse('polls:index'))
         return render(request, 'polls/results.html', {'question': question,})
 
-
+@login_required
 def vote(request, question_id):
     """
     Return a response after a user has voted a choices
     """
+    user = request.user
+    if not user.is_authenticated:
+        return redirect('login')
     question = get_object_or_404(Question, pk=question_id)
     try:
         selected_choice = question.choice_set.get(pk=request.POST['choice'])
