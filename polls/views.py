@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
 from django.views import generic
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+
 
 
 from .models import Choice, Question
@@ -27,7 +27,7 @@ class IndexView(generic.ListView):
 
 
 
-class DetailView(LoginRequiredMixin, generic.DetailView):
+class DetailView(generic.DetailView):
     model = Question
     template_name = 'polls/detail.html'
     def get_queryset(self):
@@ -72,6 +72,7 @@ class ResultsView(generic.DetailView):
             return HttpResponseRedirect(reverse('polls:index'))
         return render(request, 'polls/results.html', {'question': question,})
 
+
 @login_required
 def vote(request, question_id):
     """
@@ -97,9 +98,10 @@ def vote(request, question_id):
         # user hits the Back button.
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
 
+
 def showtime(request) -> HttpResponse:
     """
-    Return the local time and dateใ
+    Return the local time and date
     """
     thaitime = timezone.localtime()
     msg = f"<p>The time is {thaitime}.</p>"
