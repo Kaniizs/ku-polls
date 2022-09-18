@@ -40,8 +40,7 @@ class Choice(models.Model):
     """A model class for Choice"""
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     choice_text = models.CharField(max_length=200)
-    # iteration 3
-    # votes = models.IntegerField(default=0)
+ 
 
     @property
     def votes(self):
@@ -58,5 +57,12 @@ class Votes(models.Model):
     """
     A vote by user for a question
     """
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
     choice = models.ForeignKey(Choice, on_delete=models.CASCADE)
+
+    @property
+    def question(self):
+        """
+        get the question from the selected choice
+        """
+        return self.choice.question

@@ -5,10 +5,10 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
 from django.views import generic
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-
-from .models import Choice, Question
+from .models import Choice, Question, Votes
 
 
 class IndexView(generic.ListView):
@@ -27,7 +27,7 @@ class IndexView(generic.ListView):
 
 
 
-class DetailView(generic.DetailView):
+class DetailView(LoginRequiredMixin, generic.DetailView):
     model = Question
     template_name = 'polls/detail.html'
     def get_queryset(self):
@@ -76,7 +76,7 @@ class ResultsView(generic.DetailView):
 @login_required
 def vote(request, question_id):
     """
-    Return a response after a user has voted a choices
+   save a Voting choice from a question objects that user voted.
     """
     user = request.user
     if not user.is_authenticated:
@@ -91,12 +91,18 @@ def vote(request, question_id):
             'error_message': "You didn't select a choice.",
         })
     else:
-        selected_choice.votes += 1
-        selected_choice.save()
-        # Always return an HttpResponseRedirect after successfully dealing
-        # with POST data. This prevents data from being posted twice if a
-        # user hits the Back button.
-        return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
+        # save a vote
+        if not question.can_vote():
+            messages.error(request, "Voting failed!, voting period is already ended.")
+            return HttpResponseRedirect(reverse('polls:polls-results', args=(question.id,)))
+        if not Votes.objects.filter(user=user).exists():
+            selected_choice = Votes.objects.create(user=user, choice=selected_choice)
+            selected_choice.save()            
+        else:
+            changed_vote = Votes.objects.get(user=user)
+            changed_vote.choice = selected_choice
+            changed_vote.save()         
+    return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
 
 
 def showtime(request) -> HttpResponse:
