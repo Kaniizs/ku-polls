@@ -36,21 +36,29 @@ class DetailView(LoginRequiredMixin, generic.DetailView):
         """
         return Question.objects.filter(pub_date__lte=timezone.localtime())
     
-    def dispatch(self, request, pk):
+    def get(self, request, pk):
         """
         Show the detail of the polls page if can_vote method is True,if not redirect to the index pages.
         """
         question = get_object_or_404(Question, pk=pk)
-
+        user = request.user
         # if a question is not published return an error messages and return them to index page.
         if not question.is_published():
             messages.error(request, 'This question is not available for voting right now.')
             return HttpResponseRedirect(reverse('polls:index'))
         # if a question is cannot vote return an error messages and redirect to index page.
-        if not question.can_vote():
+        elif not question.can_vote():
             messages.error(request, 'This question is already exceeded the end date.')
             return HttpResponseRedirect(reverse('polls:index'))
-        return render(request, 'polls/detail.html', {'question': question,})
+        selected = ""
+        if not user.is_anonymous:
+            try:
+                Vote_data = Votes.objects.get(user=user, choice__in=question.choice_set.all())
+                selected = Vote_data.choice.choice_text
+            except Votes.DoesNotExist:
+                selected = ""
+            return render(request, 'polls/detail.html', {'question': question,
+                                                         'selected': selected})
 
         
         
@@ -79,6 +87,7 @@ def vote(request, question_id):
    save a Voting choice from a question objects that user voted.
     """
     user = request.user
+    # If a user is not authenticated, a user must login first
     if not user.is_authenticated:
         return redirect('login')
     question = get_object_or_404(Question, pk=question_id)
@@ -91,26 +100,17 @@ def vote(request, question_id):
             'error_message': "You didn't select a choice.",
         })
     else:
-        # save a vote
-        if not question.can_vote():
-            messages.error(request, "Voting failed!, voting period is already ended.")
-            return HttpResponseRedirect(reverse('polls:polls-results', args=(question.id,)))
-        if not Votes.objects.filter(user=user).exists():
-            selected_choice = Votes.objects.create(user=user, choice=selected_choice)
-            selected_choice.save()            
+        try:
+            vote = Votes.objects.get(user=user, choice__in=question.choice_set.all())
+        # Create a new vote if it does not exists.
+        except Votes.DoesNotExist:
+            selected_vote = Votes.objects.create(user=user, choice=selected_choice)
+            selected_vote.save()
+        # Replace a choice with a new choice if user already has been voted before.        
         else:
-            changed_vote = Votes.objects.get(user=user)
-            changed_vote.choice = selected_choice
-            changed_vote.save()         
+            vote.choice = selected_choice
+            vote.save()          
     return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
 
 
-def showtime(request) -> HttpResponse:
-    """
-    Return the local time and date
-    """
-    thaitime = timezone.localtime()
-    msg = f"<p>The time is {thaitime}.</p>"
-    # return the msg in an HTTP response
-    return HttpResponse(msg)
 

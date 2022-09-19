@@ -1,8 +1,10 @@
 import datetime
+from urllib import response
 
-from django.test import TestCase
+from django.test import TestCase, Client
 from django.utils import timezone
 from django.urls import reverse
+from django.contrib.auth.models import User
 
 from .models import Question
 
@@ -110,6 +112,35 @@ class QuestionModelTests(TestCase):
         no_end_date_ques = Question(pub_date=time)
         self.assertIs(no_end_date_ques.can_vote(), True)
 
+class VoteModelTests(TestCase):
+
+    def setUp(self):
+        """
+        setup() : Setting up a test user for testing
+        """
+        test_user = User.objects.create_user("Testaccount", "Test444@gmail.com", "Ilovecoding")
+        test_user.save()
+
+    def test_not_login_user_vote(self):
+        """
+        Redirect a user to login page if a user is not authenticated or login.
+        """
+        question = Question.objects.create(question_text="1", pub_date=timezone.localtime())
+        url = reverse('polls:vote', args=(question.id,))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)
+
+    def test_authenticated_user_vote(self):
+        """
+        Test that authenticated user can vote a question
+        """
+        self.client.login(username="Testaccount", password="Ilovecoding")
+        question = Question.objects.create(question_text="2", pub_date=timezone.localtime())
+        url = reverse('polls:vote', args=(question.id,))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+
 
 class QuestionIndexViewTests(TestCase):
 
@@ -170,25 +201,30 @@ class QuestionIndexViewTests(TestCase):
         )
 
 class QuestionDetailViewTests(TestCase):
+    client = Client()
+    def setUp(self):
+        """
+        setup() : Setting up a test user for testing
+        """
+        self.test_user = User.objects.create_user("Python", "Test444@gmail.com", "Ilovecoding")
+        self.test_user.save()
+
+    def test_Login(self):
+        """
+        returns a 200 status respond.
+        """
+        self.client.login(username='Python', password='Ilovecoding')
+        response = self.client.get(reverse('polls:index'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_question(self):
+        """
+        Check if a question is contained a question text  or not.
+        """
+        question = create_question(question_text="1")
+        url = reverse("polls:details", args=(question.id,))
+        response = self.client.get(url)
+        self.assertContains(response, question.question_text)
+
     
-    def test_future_question(self):
-        """
-        The detail view of a question with a pub_date in the future
-        returns a 404 not found.
-        """
-        future_question = create_question(question_text='Future question.', days=5)
-        url = reverse('polls:detail', args=(future_question.id,))
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 302)
-
-    def test_past_question(self):
-        """
-        The detail view of a question with a pub_date in the past
-        displays the question's text.
-        """
-        past_question = create_question(question_text='Past Question.', days=-5)
-        url = reverse('polls:detail', args=(past_question.id,))
-        response = self.client.get(url)
-        self.assertContains(response, past_question.question_text)
-
 

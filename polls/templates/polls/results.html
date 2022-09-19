@@ -15,7 +15,7 @@
 </table>
 
 <div class="container">
-    <a href="{% url 'logout'%}?next={{request.path}}"><button class="buttonlog" type="button">Logout</button></a>
+    <a href="{% url 'logout'%}?next={{request.path}}"><button class="buttonlog" type="button">Logout</button></a> |
     <a href="{% url 'polls:index' %}"><input type="button" value="Back to List of Polls"></a>
 </div>
 
