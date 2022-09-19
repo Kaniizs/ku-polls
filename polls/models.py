@@ -3,6 +3,7 @@ import datetime
 from django.contrib import admin
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 
 class Question(models.Model):
@@ -39,8 +40,29 @@ class Choice(models.Model):
     """A model class for Choice"""
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     choice_text = models.CharField(max_length=200)
-    votes = models.IntegerField(default=0)
+ 
+
+    @property
+    def votes(self):
+        """
+        votes(): count the numbers of the votes for each choice.
+        """
+        return Votes.objects.filter(choice_id=self.id).count()
 
     def __str__(self):
         """Return a choice text"""
         return self.choice_text
+
+class Votes(models.Model):
+    """
+    A vote by user for a question
+    """
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    choice = models.ForeignKey(Choice, on_delete=models.CASCADE)
+
+    @property
+    def question(self):
+        """
+        get the question from the selected choice
+        """
+        return self.choice.question

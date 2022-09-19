@@ -1,4 +1,5 @@
 {% load static %}
+<html lang="en_US">
 
 <link rel="stylesheet" href="{% static 'polls/style.css' %}">
 
@@ -11,10 +12,18 @@
         </legend>
         {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
         {% for choice in question.choice_set.all %}
-        <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
-        <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+            {% if choice.choice_text == selected %}
+                <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}" checked>
+                <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+            {% else %}
+                <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+                <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+            {% endif %}
         {% endfor %}
     </fieldset>
     <input type="submit" value="Vote">
 </form>
+    <a href="{% url 'logout'%}?next={{request.path}}"><button class="buttonlog" type="button">Logout</button></a> |
     <a href="{% url 'polls:index' %}"><input type="button" value="Back to List of Polls"></a>
+
+</html>
