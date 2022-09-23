@@ -24,13 +24,13 @@ https://cpske.github.io/ISP) course at Kasetsart University.
 
 - Create the virtual environment.
   ```
-  python -m venv venv
+  python -m venv env
   ```
 
 - Activate the virtual environment.
     * For windows.
         ```
-        venv\Scripts\activate
+        env\Scripts\activate
         ```
     * For MAC OS and Linux.
         ```
@@ -76,6 +76,8 @@ All project documents are in the [Project Wiki](https://github.com/oMojiko/ku-po
 - [Iteration 2 Plan](https://github.com/oMojiko/ku-polls/wiki/iteration-2-Plan)
 
 - [Iteration 3 Plan](https://github.com/oMojiko/ku-polls/wiki/iteration-3-Plan)
+
+- [Iteration 4 Plan](https://github.com/oMojiko/ku-polls/wiki/iteration-4-Plan)
 
 - [Task Board](https://github.com/users/oMojiko/projects/3/views/1)
 
