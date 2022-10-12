@@ -173,9 +173,4 @@ class QuestionDetailViewTests(TestCase):
         response = self.client.get(reverse('polls:index'))
         self.assertEqual(response.status_code, 200)
 
-    def test_question(self):
-        """Check if a question is contained a question text or not."""
-        question = create_question(question_text="1", days=1)
-        url = reverse("polls:detail", args=(question.id,))
-        response = self.client.get(url)
-        self.assertContains(response, question.question_text)
+    
