@@ -38,5 +38,7 @@ jobs:
     - name: Test code coverage
       run: |
         coverage run -m manage.py test polls
-      uses : codecov/codecov-action@v3
+    - name: Test Coverage
+      uses: codecov/codecov-action@v3
+
       
