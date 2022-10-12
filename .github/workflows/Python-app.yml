@@ -37,8 +37,8 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test code coverage
       run: |
-        coverage run -m manage.py test polls
-    - name: Test Coverage
+        coverage run manage.py test polls
+    - name: Upload Coverage
       uses: codecov/codecov-action@v3
 
       
