@@ -1,6 +1,6 @@
 # KU Polls
 
-![Test-KU-Polls](https://github.com/oMojiko/ku-polls/blob/main/.github/workflows/Python-app.yml/badge.svg)
+![Test-KU-Polls](https://github.com/oMojiko/ku-polls/actions/workflows/Test-ku-polls.yml/badge.svg)
 [![codecov](https://codecov.io/gh/oMojiko/ku-polls/branch/main/graph/badge.svg?token=KE2L6KMD8B)](https://codecov.io/gh/oMojiko/ku-polls)
 
 
