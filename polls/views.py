@@ -1,14 +1,14 @@
 """This module contains a views of the application."""
 
-from django.contrib import messages
-from django.utils import timezone
+
+from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render, redirect
+from django.contrib import messages
 from django.urls import reverse
 from django.views import generic
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils import timezone
 from .models import Choice, Question, Votes
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 class IndexView(generic.ListView):
@@ -32,7 +32,7 @@ class DetailView(LoginRequiredMixin, generic.DetailView):
 
     def get_queryset(self):
         """Excludes any questions that aren't published yet."""
-        return Question.objects.filter(pub_date__lte=timezone.localtime())
+        return Question.objects.filter(pub_date__lte=timezone.now())
 
     def get(self, request, pk):
         """Show the detail if can_vote is True,if not redirect to the index."""
@@ -44,8 +44,8 @@ class DetailView(LoginRequiredMixin, generic.DetailView):
         elif not question.can_vote():
             messages.error(request, 'This question is already over')
             return HttpResponseRedirect(reverse('polls:index'))
-        selected = ""
-        if not user.is_anonymous:
+        else:
+            selected = ""
             try:
                 q = question.choice_set.all()
                 votes = Votes.objects.get(user=user, choice__in=q)
@@ -53,7 +53,7 @@ class DetailView(LoginRequiredMixin, generic.DetailView):
             except Votes.DoesNotExist:
                 selected = ""
             return render(request, 'polls/detail.html', {'question': question,
-                                                         'selected': selected})
+                                                         'selected': selected, })
 
 
 class ResultsView(generic.DetailView):
@@ -72,13 +72,10 @@ class ResultsView(generic.DetailView):
         return render(request, 'polls/results.html', {'question': question, })
 
 
-@login_required
+
 def vote(request, question_id):
     """Save a Voting choice from a question objects that user voted."""
     user = request.user
-    # If a user is not authenticated, a user must login first
-    if not user.is_authenticated:
-        return redirect('login')
     question = get_object_or_404(Question, pk=question_id)
     try:
         selected_choice = question.choice_set.get(pk=request.POST['choice'])
